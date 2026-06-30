@@ -6,6 +6,7 @@ const upload = require('../middlewares/upload')
 
 router.get('/',       ctrl.getAll)
 router.post('/',      verificarToken, upload.single('imagen'), ctrl.crear)
+router.put('/:id',    verificarToken, upload.single('imagen'), ctrl.actualizar)
 router.delete('/:id', verificarToken, ctrl.eliminar)
 
 module.exports = router

@@ -44,4 +44,28 @@ const eliminar = async (req, res) => {
   }
 }
 
-module.exports = { getAll, crear, eliminar }
+const actualizar = async (req, res) => {
+  const { caption, contexto, ubicacion, fecha, categoria, tall, orden } = req.body
+  const imagen = req.file ? `/uploads/${req.file.filename}` : undefined
+
+  try {
+    const fields = ['caption=$2','contexto=$3','ubicacion=$4','fecha=$5',
+                    'categoria=$6','tall=$7','orden=$8']
+    const values = [req.params.id, caption, contexto, ubicacion, fecha, categoria, tall, orden]
+
+    if (imagen) {
+      fields.push(`imagen=$${values.length + 1}`)
+      values.push(imagen)
+    }
+
+    const result = await pool.query(
+      `UPDATE galeria SET ${fields.join(',')} WHERE id=$1 RETURNING *`,
+      values
+    )
+    res.json(result.rows[0])
+  } catch (err) {
+    res.status(500).json({ error: 'Error del servidor' })
+  }
+}
+
+module.exports = { getAll, crear, actualizar, eliminar }
